@@ -6,7 +6,7 @@ from routes import availability_bp
 from config import Config
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, DateField, TimeField 
 from wtforms.validators import DataRequired, Email, EqualTo
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -37,6 +37,13 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class AvailabilityForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()])  
+    start_time = TimeField('Start Time', validators=[DataRequired()])  
+    end_time = TimeField('End Time', validators=[DataRequired()])  
+    submit = SubmitField('Create Availability')
+
 
 app.register_blueprint(availability_bp, url_prefix='/api')
 
@@ -81,6 +88,36 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+#definig new admin dashboard
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin_dashboard():
+    if current_user.role != 'admin':
+        flash('Access denied', 'danger')
+        return redirect(url_for('dashboard'))
+
+    form = AvailabilityForm()
+    if form.validate_on_submit():
+        date = form.date.data
+        start_time = form.start_time.data
+        end_time = form.end_time.data
+        new_availability = Availability(date=date, start_time=start_time, end_time=end_time)
+        db.session.add(new_availability)
+        db.session.commit()
+        flash('Availability created!', 'success')
+
+    availabilities = Availability.query.all()
+    return render_template('admin.html', form=form, availabilities=availabilities)
+
+#defining new user dashboard
+@app.route('/user_dashboard')
+@login_required
+def user_dashboard():
+    availabilities = Availability.query.all()
+    return render_template('user_dashboard.html', availabilities=availabilities)
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

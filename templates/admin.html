@@ -4,25 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1>Admin Dashboard</h1>
-    <form method="POST" action="/admin">
+    <p>Hi, {{ username }}!</p>
+
+    <form method="POST" action="{{ url_for('admin_dashboard') }}">
         {{ form.hidden_tag() }}
-        <label for="date">Date:</label>
-        {{ form.date() }}<br>
-        <label for="start_time">Start Time:</label>
-        {{ form.start_time(size=32) }}<br>
-        <label for="end_time">End Time:</label>
-        {{ form.end_time(size=32) }}<br>
-        {{ form.submit() }}
+        <div>
+            {{ form.date.label }} {{ form.date(size=20) }}
+        </div>
+        <div>
+            {{ form.start_time.label }} {{ form.start_time(size=20) }}
+        </div>
+        <div>
+            {{ form.end_time.label }} {{ form.end_time(size=20) }}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
     </form>
+
     <h2>Availabilities</h2>
     <ul>
         {% for availability in availabilities %}
-            <li>{{ availability.date }} from {{ availability.start_time }} to {{ availability.end_time }}</li>
+            <li>{{ availability.date }}: {{ availability.start_time }} - {{ availability.end_time }}</li>
         {% endfor %}
     </ul>
+
     <a href="{{ url_for('logout') }}">Logout</a>
+    
 </body>
 </html>

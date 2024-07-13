@@ -81,7 +81,9 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return f'Hello, {current_user.username}!'
+    if current_user.role == 'admin':
+        return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('user_dashboard'))
 
 @app.route('/logout')
 @login_required
@@ -95,7 +97,7 @@ def logout():
 def admin_dashboard():
     if current_user.role != 'admin':
         flash('Access denied', 'danger')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('user_dashboard'))
 
     form = AvailabilityForm()
     if form.validate_on_submit():
@@ -108,14 +110,14 @@ def admin_dashboard():
         flash('Availability created!', 'success')
 
     availabilities = Availability.query.all()
-    return render_template('admin.html', form=form, availabilities=availabilities)
+    return render_template('admin.html', form=form, availabilities=availabilities, username=current_user.username)
 
 #defining new user dashboard
 @app.route('/user_dashboard')
 @login_required
 def user_dashboard():
     availabilities = Availability.query.all()
-    return render_template('user_dashboard.html', availabilities=availabilities)
+    return render_template('user_dashboard.html', availabilities=availabilities, username=current_user.username)
 
 
 

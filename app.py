@@ -2,6 +2,7 @@ from flask import Flask
 from models import db, Availability
 from routes import availability_bp
 from config import Config
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -17,4 +18,5 @@ create_tables()
 app.register_blueprint(availability_bp, url_prefix='/api')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

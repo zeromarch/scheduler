@@ -38,6 +38,8 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
+app.register_blueprint(availability_bp, url_prefix='/api')
+
 @app.route('/')
 def index():
     return render_template('index.html')

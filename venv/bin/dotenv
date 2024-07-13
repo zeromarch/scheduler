@@ -1,4 +1,4 @@
-#!/Users/marcellotommasi/scheduler-tool/venv/bin/python3.11
+#!/Users/marcellotommasi/scheduler-tool/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

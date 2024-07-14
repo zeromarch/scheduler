@@ -55,7 +55,7 @@
         }
         #calendar {
             width: 100%;
-            max-width: 1350px;
+            max-width: 1000px;
             height: 100%;
             max-height: 80vh;
             overflow-y: auto;
@@ -69,6 +69,29 @@
             bottom: 0;
             width: 100%;
         }
+        .list-view {
+            margin-top: 20px;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .list-item button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .list-item button:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +103,13 @@
 
     <div class="container">
         <div id='calendar'></div>
+    </div>
+
+    <div class="container">
+        <div class="list-view">
+            <h2>Selected Events</h2>
+            <div id="event-list"></div>
+        </div>
     </div>
 
     <div class="footer">
@@ -100,12 +130,33 @@
                 },
                 events: events,
                 eventClick: function(info) {
-                    alert('Event: ' + info.event.title);
-                    // Change the border color just for fun
-                    info.el.style.borderColor = 'red';
+                    info.jsEvent.preventDefault(); // Prevent the default action (open URL)
+                    addEventToList(info.event);
                 }
             });
             calendar.render();
+
+            function formatDateTime(dateTime) {
+                var options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                return dateTime.toLocaleDateString('en-US', options);
+            }
+
+            function addEventToList(event) {
+                var eventList = document.getElementById('event-list');
+                var listItem = document.createElement('div');
+                listItem.className = 'list-item';
+                listItem.innerHTML = `
+                    <span>${formatDateTime(event.start)} </span>
+                    <button onclick="this.parentElement.remove()">Delete</button>
+                `;
+                eventList.appendChild(listItem);
+            }
         });
     </script>
 </body>

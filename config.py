@@ -14,3 +14,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY')
+    WTF_CSRF_ENABLED = True

@@ -117,9 +117,14 @@ def admin_dashboard():
 @login_required
 def user_dashboard():
     availabilities = Availability.query.all()
-    return render_template('user_dashboard.html', availabilities=availabilities, username=current_user.username)
-
-
+    events = [{
+        'id': a.id,
+        'title': 'Available',
+        'start': f"{a.date.isoformat()}T{a.start_time.isoformat()}",
+        'end': f"{a.date.isoformat()}T{a.end_time.isoformat()}"
+    } for a in availabilities]
+    print(events) 
+    return render_template('user_dashboard.html', events=events, username=current_user.username)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
